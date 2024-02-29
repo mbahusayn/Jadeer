@@ -1,0 +1,35 @@
+name: hackathon
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.2.3 <4.0.0"
+
+dependencies:
+  dot_navigation_bar: ^1.0.2
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: IBMPlexSans
+      fonts:
+        - asset: assets/fonts/IBMPlexSansArabic-Light.ttf
+          weight: 400
+        - asset: assets/fonts/IBMPlexSansArabic-Regular.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexSansArabic-Medium.ttf
+          weight: 600
+        - asset: assets/fonts/IBMPlexSansArabic-SemiBold.ttf
+          weight: 700

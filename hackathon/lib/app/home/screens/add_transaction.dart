@@ -1,0 +1,318 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hackathon/app/home/model/transaction_model.dart';
+import 'package:hackathon/app/home/screens/home_screen.dart';
+import 'package:hackathon/app/home/widgets/date_picker.dart';
+import 'package:hackathon/app/home/widgets/text_field.dart';
+import 'package:hackathon/utils/functions.dart';
+import 'package:hackathon/constants/constants.dart';
+import 'package:hackathon/style/colors.dart';
+
+const List<String> categories = [
+  "تسوق",
+  "مطعم",
+  "مقهى",
+  "حوالة",
+  "فاتورة",
+  "قرض",
+  "أخرى"
+];
+
+class AddTransactionScreen extends StatefulWidget {
+  const AddTransactionScreen({super.key});
+
+  @override
+  State<AddTransactionScreen> createState() => _AddTransactionScreenState();
+}
+
+class _AddTransactionScreenState extends State<AddTransactionScreen> {
+  TextEditingController tite = TextEditingController(),
+      amount = TextEditingController();
+
+  String dropdownisExpenseueCategory = categories.first;
+
+  DateTime selectedDate = DateTime.now();
+  String dropdownisExpenseue = categories.first;
+  bool isExpense = true;
+
+  // Future<void> _selectDate(BuildContext context) async {
+  //   final DateTime? picked = await showDate(
+  //       context: context,
+  //       initialDate: selectedDate,
+  //       firstDate: DateTime(2015, 8),
+  //       lastDate: DateTime(2101));
+  //   if (picked != null && picked != selectedDate) {
+  //     setState(() {
+  //       selectedDate = picked;
+  //     });
+
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "إضافة معاملة جديدة",
+          style: TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        backgroundColor: ColorsApp.primaryColor,
+      ),
+      body: Stack(children: [
+        Container(
+          width: getWidth(context),
+          height: getHeight(context),
+          color: ColorsApp.primaryColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              height16,
+              Container(
+                width: getWidth(context),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 144, 196, 190),
+                    borderRadius: BorderRadius.circular(16)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "فئة المعاملة",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: DropdownButton<String>(
+                        value: dropdownisExpenseue,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        elevation: 4,
+                        underline: Container(),
+                        style: const TextStyle(
+                            color: Colors.black, fontFamily: "IBMPlexSans"),
+                        onChanged: (String? isExpenseue) {
+                          setState(() {
+                            dropdownisExpenseue = isExpenseue!;
+                          });
+                        },
+                        items: categories.map<DropdownMenuItem<String>>(
+                            (String isExpenseue) {
+                          return DropdownMenuItem<String>(
+                            value: isExpenseue,
+                            child: Row(
+                              children: [
+                                categoryIcon(isExpenseue),
+                                width8,
+                                Text(isExpenseue),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              height16,
+              const Text(
+                "كم المبلغ ؟",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600),
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: getWidth(context) * 0.25,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      cursorColor: Colors.white,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold),
+                      decoration: const InputDecoration(
+                          hintText: "100",
+                          hintStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold),
+                          filled: true,
+                          fillColor: ColorsApp.primaryColor,
+                          border: InputBorder.none),
+                    ),
+                  ),
+                  const Text(
+                    " ريال ",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600),
+                  )
+                ],
+              )
+            ]),
+          ),
+        ),
+        Positioned(
+          top: 200,
+          child: Container(
+            height: getHeight(context) * 0.65,
+            width: getWidth(context),
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const TextLabel(
+                          text: "اسم المعاملة",
+                        ),
+                        TextFieldWidget(hint: "مطعم", controller: tite),
+                        height16,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const TextLabel(
+                              text: "نوع المعاملة",
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isExpense = !isExpense;
+                                });
+                              },
+                              child: Container(
+                                width: 200,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    color: ColorsApp.secondaryColor),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        width: 90,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: isExpense
+                                                ? Colors.white
+                                                : ColorsApp.secondaryColor),
+                                        child: Center(
+                                            child: Text(
+                                          'نفقة',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: isExpense
+                                                  ? Colors.black
+                                                  : Colors.white),
+                                        )),
+                                      ),
+                                      AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        width: 90,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: isExpense
+                                                ? ColorsApp.secondaryColor
+                                                : Colors.white),
+                                        child: Center(
+                                            child: Text(
+                                          'إيراد',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: isExpense
+                                                  ? Colors.white
+                                                  : Colors.black),
+                                        )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        height16,
+                        const TextLabel(
+                          text: "التاريخ",
+                        ),
+                        height16,
+                        const DatePickerWidget(),
+                      ]),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Transaction newTransaction = Transaction(
+                            title: tite.text,
+                            amount: double.parse(
+                                amount.text.isEmpty ? "1" : amount.text),
+                            type: isExpense ? "النفقات" : "الإيرادات",
+                            category: dropdownisExpenseueCategory,
+                            date:
+                                "${selectedDate.year}/${selectedDate.month}/${selectedDate.day}");
+                        transactions.add(newTransaction);
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorsApp.primaryColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          fixedSize: Size(getWidth(context), 45)),
+                      child: const Text(
+                        "إضافة",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class TextLabel extends StatelessWidget {
+  const TextLabel({
+    super.key,
+    required this.text,
+  });
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    );
+  }
+}
