@@ -7,7 +7,7 @@ environment:
   sdk: ">=3.2.3 <4.0.0"
 
 dependencies:
-  dot_navigation_bar: ^1.0.2
+  d_chart: ^2.6.9
   flutter:
     sdk: flutter
   flutter_localizations:

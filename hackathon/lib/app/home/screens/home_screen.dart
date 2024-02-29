@@ -4,9 +4,8 @@ import 'package:hackathon/app/home/screens/add_transaction.dart';
 import 'package:hackathon/app/home/widgets/transaction_widget.dart';
 import 'package:hackathon/app/home/widgets/type_widget.dart';
 import 'package:hackathon/constants/constants.dart';
+import 'package:hackathon/constants/data.dart';
 import 'package:hackathon/style/colors.dart';
-
-const List<String> list = <String>['شهري', 'يومي', 'سنوي'];
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -18,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String dropdownValue = list.first;
+  String dropdownValue = duration.first;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      //------------ period
+                      //------------ duration
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Container(
@@ -95,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 dropdownValue = value!;
                               });
                             },
-                            items: list
+                            items: duration
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,

@@ -1,23 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
 import 'package:hackathon/app/home/screens/home_screen.dart';
 import 'package:hackathon/app/home/widgets/date_picker.dart';
 import 'package:hackathon/app/home/widgets/text_field.dart';
+import 'package:hackathon/constants/data.dart';
 import 'package:hackathon/utils/functions.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/style/colors.dart';
-
-const List<String> categories = [
-  "تسوق",
-  "مطعم",
-  "مقهى",
-  "حوالة",
-  "فاتورة",
-  "قرض",
-  "أخرى"
-];
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -28,27 +18,13 @@ class AddTransactionScreen extends StatefulWidget {
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   TextEditingController tite = TextEditingController(),
-      amount = TextEditingController();
+      amount = TextEditingController(text: "100");
 
   String dropdownisExpenseueCategory = categories.first;
 
   DateTime selectedDate = DateTime.now();
   String dropdownisExpenseue = categories.first;
   bool isExpense = true;
-
-  // Future<void> _selectDate(BuildContext context) async {
-  //   final DateTime? picked = await showDate(
-  //       context: context,
-  //       initialDate: selectedDate,
-  //       firstDate: DateTime(2015, 8),
-  //       lastDate: DateTime(2101));
-  //   if (picked != null && picked != selectedDate) {
-  //     setState(() {
-  //       selectedDate = picked;
-  //     });
-
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -133,26 +109,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   SizedBox(
                     width: getWidth(context) * 0.25,
                     child: TextField(
+                      controller: amount,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       cursorColor: Colors.white,
+                      cursorHeight: 30,
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 36,
                           fontWeight: FontWeight.bold),
                       decoration: const InputDecoration(
-                          hintText: "100",
-                          hintStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold),
                           filled: true,
                           fillColor: ColorsApp.primaryColor,
                           border: InputBorder.none),
                     ),
                   ),
                   const Text(
-                    " ريال ",
+                    "ريال",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,

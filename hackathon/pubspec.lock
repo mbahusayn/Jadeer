@@ -41,14 +41,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
-  dot_navigation_bar:
-    dependency: "direct main"
+  community_charts_common:
+    dependency: transitive
     description:
-      name: dot_navigation_bar
-      sha256: "753e1d91644e39beddd0a4ed7e366f37a95e38cafb601c3b7496120ae0532f63"
+      name: community_charts_common
+      sha256: "20697244c826df0545237ebe01d61caa96a2a2e4d23c6f88890441636a4d5220"
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  community_charts_flutter:
+    dependency: transitive
+    description:
+      name: community_charts_flutter
+      sha256: ca5bd07337e162daee13c19679f602cd8b3f704520d242beeebbc2e312f84f89
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
+  d_chart:
+    dependency: "direct main"
+    description:
+      name: d_chart
+      sha256: ca46ca94058075591150bd6c4b93541112d58314bb843873f39e820ee7005d01
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.9"
   fake_async:
     dependency: transitive
     description:
@@ -199,3 +215,4 @@ packages:
     version: "0.3.0"
 sdks:
   dart: ">=3.2.3 <4.0.0"
+  flutter: ">=2.5.0"

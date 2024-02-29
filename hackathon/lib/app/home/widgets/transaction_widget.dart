@@ -12,28 +12,45 @@ class TransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 225, 225, 225),
-              borderRadius: BorderRadius.circular(16)),
-          child: categoryIcon(transaction.category)),
-      title: Text(
-        transaction.title,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    return Dismissible(
+      key: Key(transaction.title),
+      background: Container(
+        decoration: BoxDecoration(
+            color: Colors.red, borderRadius: BorderRadius.circular(16)),
+        child: const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
-      subtitle: Text(transaction.category),
-      trailing: Text(
-        transaction.type == "النفقات"
-            ? "- ${transaction.amount} ريال"
-            : "+ ${transaction.amount} ريال",
-        style: TextStyle(
-          color: transaction.type == "النفقات"
-              ? Colors.red
-              : ColorsApp.ternaryColor,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+      child: ListTile(
+        leading: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 225, 225, 225),
+                borderRadius: BorderRadius.circular(16)),
+            child: categoryIcon(transaction.category)),
+        title: Text(
+          transaction.title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(transaction.category),
+        trailing: Text(
+          transaction.type == "النفقات"
+              ? "- ${transaction.amount} ريال"
+              : "+ ${transaction.amount} ريال",
+          style: TextStyle(
+            color: transaction.type == "النفقات"
+                ? Colors.red
+                : ColorsApp.ternaryColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

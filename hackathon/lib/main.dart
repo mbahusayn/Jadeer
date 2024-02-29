@@ -20,7 +20,16 @@ class MainApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: "IBMPlexSans"),
+      theme: ThemeData(
+          fontFamily: "IBMPlexSans",
+          useMaterial3: false,
+          appBarTheme:
+              const AppBarTheme(backgroundColor: Colors.white, elevation: 0),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16))),
+          scaffoldBackgroundColor: Colors.white,
+          dividerTheme: const DividerThemeData(thickness: 0.8)),
       home: const AppNavigationBar(),
     );
   }
