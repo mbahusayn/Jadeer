@@ -1,6 +1,6 @@
 import 'package:d_chart/d_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:hackathon/app/home/screens/add_transaction.dart';
+import 'package:hackathon/app/common_widget.dart/text_label.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/constants/data.dart';
 import 'package:hackathon/style/colors.dart';

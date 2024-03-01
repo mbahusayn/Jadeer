@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
+import 'package:hackathon/app/home/screens/home_screen.dart';
 import 'package:hackathon/utils/functions.dart';
 import 'package:hackathon/style/colors.dart';
 
@@ -14,6 +15,10 @@ class TransactionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
       key: Key(transaction.title),
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {
+        transactions.remove(transaction);
+      },
       background: Container(
         decoration: BoxDecoration(
             color: Colors.red, borderRadius: BorderRadius.circular(16)),

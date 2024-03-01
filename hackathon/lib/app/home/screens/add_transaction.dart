@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hackathon/app/common_widget.dart/button.dart';
+import 'package:hackathon/app/common_widget.dart/text_label.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
 import 'package:hackathon/app/home/screens/home_screen.dart';
 import 'package:hackathon/app/home/widgets/date_picker.dart';
-import 'package:hackathon/app/home/widgets/text_field.dart';
+import 'package:hackathon/app/common_widget.dart/text_field.dart';
 import 'package:hackathon/constants/data.dart';
 import 'package:hackathon/utils/functions.dart';
 import 'package:hackathon/constants/constants.dart';
@@ -238,7 +240,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ]),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: ElevatedButton(
+                    child: ElevatedButtonWidget(
                       onPressed: () {
                         Transaction newTransaction = Transaction(
                             title: tite.text,
@@ -251,18 +253,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         transactions.add(newTransaction);
                         Navigator.pop(context);
                       },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorsApp.primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          fixedSize: Size(getWidth(context), 45)),
-                      child: const Text(
-                        "إضافة",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                      ),
+                      text: "إضافة",
                     ),
                   )
                 ],
@@ -271,21 +262,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           ),
         ),
       ]),
-    );
-  }
-}
-
-class TextLabel extends StatelessWidget {
-  const TextLabel({
-    super.key,
-    required this.text,
-  });
-  final String text;
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
     );
   }
 }

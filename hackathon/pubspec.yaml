@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   d_chart: ^2.6.9
+  u_credit_card: ^1.1.0
   flutter:
     sdk: flutter
   flutter_localizations:

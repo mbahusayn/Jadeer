@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
 import 'package:hackathon/app/home/screens/add_transaction.dart';
+import 'package:hackathon/app/home/widgets/switch_account.dart';
 import 'package:hackathon/app/home/widgets/transaction_widget.dart';
 import 'package:hackathon/app/home/widgets/type_widget.dart';
 import 'package:hackathon/constants/constants.dart';
@@ -25,9 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const AddTransactionScreen()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddTransactionScreen()))
+              .then((value) {
+            setState(() {});
+          });
         },
         backgroundColor: ColorsApp.secondaryColor,
         elevation: 0,
@@ -55,17 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
                             showModalBottomSheet(
                                 context: context,
-                                builder: (context) => SizedBox(
-                                      width: getWidth(context),
-                                      height: 200,
-                                      child: Column(children: [
-                                        const Text("الحساب الحالي"),
-                                        const Text("تغيير الحساب"),
-                                        ElevatedButton(
-                                            onPressed: () {},
-                                            child: const Text("data"))
-                                      ]),
-                                    ));
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                builder: (context) => const SwitchAccount());
                           },
                           child: const Row(
                             children: [
@@ -120,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       Positioned(
-                        top: 60,
+                        top: 50,
                         left: 35,
                         child: Column(
                           children: [
@@ -182,7 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) =>
                       TransactionWidget(transaction: transactions[index]),
                   separatorBuilder: (context, index) => const Divider(),
-                )
+                ),
+                height48,
 
                 //-------------end
               ],
