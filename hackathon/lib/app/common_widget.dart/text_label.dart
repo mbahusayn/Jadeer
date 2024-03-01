@@ -14,3 +14,16 @@ class TextLabel extends StatelessWidget {
     );
   }
 }
+
+class TextTitle extends StatelessWidget {
+  const TextTitle({super.key, required this.text, this.color = Colors.black});
+  final String text;
+  final Color color;
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
+    );
+  }
+}

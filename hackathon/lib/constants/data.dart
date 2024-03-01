@@ -8,4 +8,4 @@ const List<String> categories = [
   "أخرى"
 ];
 
-const List<String> duration = <String>['شهري', 'يومي', 'سنوي'];
+const List<String> duration = <String>['شهري', 'سنوي'];

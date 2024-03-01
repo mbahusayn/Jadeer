@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hackathon/app/analytics/analytics_screen.dart';
 import 'package:hackathon/app/home/screens/home_screen.dart';
 import 'package:hackathon/app/profile/screens/profile_screen.dart';
+import 'package:hackathon/app/split/screens/split_screen.dart';
 import 'package:hackathon/style/colors.dart';
 
 class AppNavigationBar extends StatefulWidget {
@@ -15,7 +16,7 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
   final List<Widget> screens = [
     const HomeScreen(),
     const AnalyticsScreen(),
-    const HomeScreen(),
+    const SplitScreen(),
     const ProfileScreen(),
   ];
   int _selectedIndex = 0;

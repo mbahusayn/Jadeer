@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hackathon/app/common_widget.dart/add_button.dart';
 import 'package:hackathon/app/common_widget.dart/text_label.dart';
-import 'package:hackathon/app/profile/widgets/profile_tile.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/style/colors.dart';
 
@@ -24,35 +24,51 @@ class AccountScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const TextLabel(text: "الحسابات"),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                      color: ColorsApp.secondaryColor, shape: BoxShape.circle),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                ),
+              AddIconButton(
+                onPressed: () {},
               ),
             ],
           ),
         ),
         const Divider(),
-        const ProfileTile(
+        const AccountWidget(
           text: "الحساب الأساسي",
           icon: Icons.credit_card,
-          screen: AccountScreen(),
         ),
         const Divider(indent: 16, endIndent: 16),
-        const ProfileTile(
+        const AccountWidget(
           text: "الحساب الثاني",
           icon: Icons.credit_card,
-          screen: AccountScreen(),
         ),
         const Divider(indent: 16, endIndent: 16),
       ]),
+    );
+  }
+}
+
+class AccountWidget extends StatelessWidget {
+  const AccountWidget({
+    super.key,
+    required this.text,
+    required this.icon,
+  });
+  final String text;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(16)),
+        child: Icon(
+          icon,
+          color: ColorsApp.primaryColor,
+        ),
+      ),
+      title: Text(text),
     );
   }
 }
