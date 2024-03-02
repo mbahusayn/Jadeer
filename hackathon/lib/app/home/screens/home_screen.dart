@@ -4,6 +4,7 @@ import 'package:hackathon/app/home/screens/add_transaction.dart';
 import 'package:hackathon/app/home/widgets/switch_account.dart';
 import 'package:hackathon/app/home/widgets/transaction_widget.dart';
 import 'package:hackathon/app/home/widgets/type_widget.dart';
+import 'package:hackathon/app/profile/model/account.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/constants/data.dart';
 import 'package:hackathon/services/supabase_functions.dart';
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getTotals();
+    SupabaseFunctions().getAllTransactionOrededByDate();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(
                       builder: (context) => const AddTransactionScreen()))
               .then((value) {
+            getTotals();
             setState(() {});
           });
         },
@@ -120,44 +122,56 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ]),
                 //------------ Circle
-                const Center(
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: CircularProgressIndicator(
-                          backgroundColor: ColorsApp.greyColor,
-                          color: ColorsApp.primaryColor,
-                          strokeWidth: 10,
-                          value: 0.5,
-                        ),
-                      ),
-                      Positioned(
-                        top: 50,
-                        left: 35,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "15000",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 20),
-                                ),
-                                Text(
-                                  " ريال",
-                                )
-                              ],
+                FutureBuilder(
+                    future: SupabaseFunctions().getAccount(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        Account account = snapshot.data!;
+                        return Center(
+                            child:
+                                Stack(alignment: Alignment.center, children: [
+                          SizedBox(
+                            height: 150,
+                            width: 150,
+                            child: CircularProgressIndicator(
+                              backgroundColor: ColorsApp.greyColor,
+                              valueColor: const AlwaysStoppedAnimation(
+                                  ColorsApp.primaryColor),
+                              strokeWidth: 10,
+                              value: expensePercentage(
+                                      account.totalBudget, account.balance) /
+                                  100,
                             ),
-                            Text("أنفقت 50%")
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    account.balance.toString(),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20),
+                                  ),
+                                  const Text(
+                                    " ريال",
+                                  )
+                                ],
+                              ),
+                              Text(
+                                  "أنفقت ${expensePercentage(account.totalBudget, account.balance).toStringAsFixed(1)} %")
+                            ],
+                          )
+                        ]));
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorsApp.primaryColor,
+                          ),
+                        );
+                      }
+                    }),
                 //------------ types
                 height24,
                 Row(
@@ -186,29 +200,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 height8,
 
                 FutureBuilder(
-                    future: SupabaseFunctions().getAllTransaction(),
+                    future: SupabaseFunctions().getAllTransactionOrededByDate(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        List<Transaction> transactions = snapshot.data!;
+                        Map<String, List<Transaction>> transactions =
+                            snapshot.data!;
                         return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              dateFormat(transactions.first.date),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const Divider(),
-                            ListView.separated(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: transactions.length,
-                              itemBuilder: (context, index) =>
-                                  TransactionWidget(
-                                      transaction: transactions[index]),
-                              separatorBuilder: (context, index) =>
-                                  const Divider(),
-                            ),
+                            for (var element in transactions.keys)
+                              TransactionGrouped(
+                                transactions: transactions,
+                                date: element,
+                              )
                           ],
                         );
                       } else {
@@ -230,29 +233,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// List<Transaction> transactions = [
-//   Transaction(
-//       title: "البيك",
-//       date: "2/2/2024",
-//       amount: 40,
-//       type: "النفقات",
-//       category: "مطعم"),
-//   Transaction(
-//       title: "بارنز كافيه",
-//       date: "2/2/2024",
-//       amount: 16,
-//       type: "النفقات",
-//       category: "مقهى"),
-//   Transaction(
-//       title: "حوالة",
-//       date: "2/2/2024",
-//       amount: 1000,
-//       type: "إيرادات",
-//       category: "حوالة"),
-//   Transaction(
-//       title: "سماعات",
-//       date: "2/2/2024",
-//       amount: 300,
-//       type: "النفقات",
-//       category: "تسوق"),
-// ];
+class TransactionGrouped extends StatelessWidget {
+  const TransactionGrouped({
+    super.key,
+    required this.transactions,
+    required this.date,
+  });
+
+  final Map<String, List<Transaction>> transactions;
+  final String date;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          dateFormat(date),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const Divider(),
+        ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: transactions[date]!.length,
+          itemBuilder: (context, index) =>
+              TransactionWidget(transaction: transactions[date]![index]),
+        ),
+      ],
+    );
+  }
+}

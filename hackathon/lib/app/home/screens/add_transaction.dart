@@ -24,8 +24,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   String dropdownCategory = categories.first;
 
-  DateTime selectedDate = DateTime.now();
-
   bool isExpense = true;
 
   @override
@@ -109,7 +107,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               Row(
                 children: [
                   SizedBox(
-                    width: getWidth(context) * 0.25,
+                    width: getWidth(context) * 0.35,
                     child: TextField(
                       controller: amount,
                       keyboardType: TextInputType.number,
@@ -243,13 +241,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     child: ElevatedButtonWidget(
                       onPressed: () async {
                         Transaction newTransaction = Transaction(
+                            id: 0,
                             title: tite.text,
                             amount: double.parse(
                                 amount.text.isEmpty ? "1" : amount.text),
                             type: isExpense ? "النفقات" : "الإيرادات",
                             category: dropdownCategory,
-                            date:
-                                "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}");
+                            date: selectedDate);
                         await SupabaseFunctions()
                             .addTransaction(newTransaction.toJson());
                         Navigator.pop(context);

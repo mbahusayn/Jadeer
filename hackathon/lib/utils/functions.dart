@@ -75,3 +75,11 @@ Widget categoryIcon(category) {
     );
   }
 }
+
+double expensePercentage(double totalBudget, double balance) {
+  double amountSpent = totalBudget - balance;
+
+  double percentage = (amountSpent / totalBudget) * 100;
+
+  return percentage;
+}

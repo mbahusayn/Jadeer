@@ -1,6 +1,7 @@
 import 'package:hackathon/app/auth/screens/loading_screen.dart';
 
 class Transaction {
+  final int id;
   final String title;
   final String date;
   final double amount;
@@ -8,6 +9,7 @@ class Transaction {
   final String category;
 
   Transaction({
+    required this.id,
     required this.title,
     required this.date,
     required this.amount,
@@ -16,6 +18,7 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
+        id: json["id"],
         title: json["title"],
         date: json["date"],
         amount: json["amount"]?.toDouble(),

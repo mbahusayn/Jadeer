@@ -1,74 +1,11 @@
+import 'package:hackathon/app/auth/screens/loading_screen.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
+import 'package:hackathon/app/profile/model/account.dart';
 import 'package:hackathon/app/profile/model/user.dart' as user;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseFunctions {
   final supabase = Supabase.instance.client;
-  /*
-  Future<List<Course>> getCourses() async {
-    final List data = await Supabase.instance.client
-        .from('Course')
-        .select('id, name, Teacher(name)')
-        .order('id', ascending: true); // query from 2 relational tables by FK
-
-    log(data.toString());
-
-    List<Course> coursesList = [];
-    for (var element in data) {
-      coursesList.add(Course.fromJson(element));
-    }
-
-    return coursesList;
-  }
-
-  //---
-  Future<List<Student>> getStudents({int? courseId}) async {
-    List data = [];
-    if (courseId != null) {
-      //get students by course id
-      data = await Supabase.instance.client
-          .from('Student')
-          .select(
-              '*, StrudentCourse!inner()') // inner join 2 relational tables by FK
-          .eq('StrudentCourse.course_id', courseId); // filter by course id
-
-      log(data.toString());
-    } else {
-      // get all students
-      data = await Supabase.instance.client.from('Student').select('*');
-    }
-
-    List<Student> studentsList = [];
-    for (var element in data) {
-      studentsList.add(Student.fromJson(element));
-    }
-    return studentsList;
-  }
-  //---
-
-  addNewCourse(Map body) async {
-    final supabase = Supabase.instance.client;
-    final data = await supabase.from('Course').insert(body).select();
-
-    print(data);
-  }
-
-  addNewStudent(Map body) async {
-    final supabase = Supabase.instance.client;
-    await supabase.from('Student').insert(body);
-  }
-
-  updateCourse({required int id, required String newName}) async {
-    final supabase = Supabase.instance.client;
-    await supabase.from('Course').update({"name": newName}).eq("id", id);
-  }
-
-  deleteCourset(int id) async {
-    final supabase = Supabase.instance.client;
-    await supabase.from('StrudentCourse').delete().eq('course_id', id);
-    await supabase.from('Course').delete().eq('id', id);
-  }
-  */
 
   addNewUser(Map body) async {
     try {
@@ -120,6 +57,43 @@ class SupabaseFunctions {
     }
   }
 
+  Future<Map<String, List<Transaction>>> getAllTransactionOrededByDate() async {
+    try {
+      final response = await supabase
+          .from('Transaction')
+          .select("*")
+          .order("date", ascending: false);
+
+      final Map<String, List<Transaction>> groupedTransactions = {};
+
+      for (final element in response) {
+        final String date = element["date"];
+
+        if (!groupedTransactions.containsKey(date)) {
+          groupedTransactions[date] = [];
+        }
+        groupedTransactions[date]!.add(Transaction.fromJson(element));
+      }
+      groupedTransactions.forEach((day, images) {
+        images.sort((a, b) => b.date.compareTo(a.date));
+      });
+
+      return groupedTransactions;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  deleteTransaction(int id) async {
+    try {
+      await supabase.from('Transaction').delete().eq("id", id);
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
   Future<double> getTotalExpenses() async {
     try {
       final data = await supabase
@@ -152,6 +126,50 @@ class SupabaseFunctions {
       }
 
       return sum;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  addAccount(Map body) async {
+    try {
+      await supabase.from('Account').insert(body);
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  Future<List<Account>> getAllAccounts() async {
+    try {
+      List<Account> list = [];
+      final response = await supabase
+          .from('Account')
+          .select("*")
+          .eq("user_id", currentUser.id);
+
+      for (var element in response) {
+        list.add(Account.fromJson(element));
+      }
+
+      return list;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  Future<Account> getAccount() async {
+    try {
+      final response = await supabase
+          .from('Account')
+          .select("*")
+          .match({"user_id": currentUser.id}).single();
+
+      Account account = Account.fromJson(response);
+
+      return account;
     } catch (error) {
       print(error);
       throw const FormatException();

@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hackathon/utils/functions.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/style/colors.dart';
+
+String selectedDate = "";
 
 class DatePickerWidget extends StatefulWidget {
   const DatePickerWidget({super.key});
@@ -13,12 +14,11 @@ class DatePickerWidget extends StatefulWidget {
 
 class _DatePickerWidgetState extends State<DatePickerWidget> {
   DateTime currentDate = DateTime.now();
-  String selectedDate = "";
 
   @override
   void initState() {
     selectedDate =
-        "${monthText(currentDate.month)} ${currentDate.day}, ${currentDate.year}";
+        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
     super.initState();
   }
 
@@ -41,10 +41,10 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
               width: getWidth(context),
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                onDateTimeChanged: (isExpenseue) {
+                onDateTimeChanged: (dateValue) {
                   setState(() {
                     selectedDate =
-                        "${monthText(isExpenseue.month)} ${isExpenseue.day}, ${isExpenseue.year}";
+                        "${dateValue.year}-${dateValue.month}-${dateValue.day}";
                   });
                 },
               ),
