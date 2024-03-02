@@ -45,59 +45,9 @@ class _AccountScreenState extends State<AccountScreen> {
                       shape: const RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(16))),
-                      builder: (context) => Padding(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom),
-                            child: SizedBox(
-                              height: 400,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Center(
-                                      child: Text(
-                                        "إنشاء حساب جديد",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    height32,
-                                    const TextLabel(text: "العنوان"),
-                                    TextFieldWidget(
-                                      hint: "",
-                                      controller: title,
-                                    ),
-                                    const TextLabel(text: "الدخل الشهري"),
-                                    TextFieldWidget(
-                                      hint: "",
-                                      controller: monthlyIncome,
-                                      isNumber: true,
-                                    ),
-                                    height48,
-                                    ElevatedButtonWidget(
-                                        onPressed: () async {
-                                          await SupabaseFunctions().addAccount({
-                                            "account_title": title.text,
-                                            "monthly_income": double.parse(
-                                                monthlyIncome.text),
-                                            "balance": double.parse(
-                                                monthlyIncome.text),
-                                            "total_budget": double.parse(
-                                                monthlyIncome.text),
-                                            "user_id": currentUser.id,
-                                          });
-
-                                          Navigator.pop(context);
-                                        },
-                                        text: "إضافة"),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )).then((value) {
+                      builder: (context) => AddAccountSheet(
+                          title: title,
+                          monthlyIncome: monthlyIncome)).then((value) {
                     setState(() {});
                   });
                 },
@@ -132,6 +82,68 @@ class _AccountScreenState extends State<AccountScreen> {
               }
             }),
       ]),
+    );
+  }
+}
+
+class AddAccountSheet extends StatelessWidget {
+  const AddAccountSheet({
+    super.key,
+    required this.title,
+    required this.monthlyIncome,
+  });
+
+  final TextEditingController title;
+  final TextEditingController monthlyIncome;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SizedBox(
+        height: 400,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                child: Text(
+                  "إنشاء حساب جديد",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              height32,
+              const TextLabel(text: "العنوان"),
+              TextFieldWidget(
+                hint: "",
+                controller: title,
+              ),
+              const TextLabel(text: "الدخل الشهري"),
+              TextFieldWidget(
+                hint: "",
+                controller: monthlyIncome,
+                isNumber: true,
+              ),
+              height48,
+              ElevatedButtonWidget(
+                  onPressed: () async {
+                    await SupabaseFunctions().addAccount({
+                      "account_title": title.text,
+                      "monthly_income": double.parse(monthlyIncome.text),
+                      "balance": double.parse(monthlyIncome.text),
+                      "total_budget": double.parse(monthlyIncome.text),
+                      "user_id": currentUser.id,
+                    });
+
+                    Navigator.pop(context);
+                  },
+                  text: "إضافة"),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

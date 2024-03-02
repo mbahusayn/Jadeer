@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:hackathon/app/auth/screens/loading_screen.dart';
 import 'package:hackathon/app/common_widget.dart/add_button.dart';
 import 'package:hackathon/app/common_widget.dart/button.dart';
 import 'package:hackathon/app/common_widget.dart/text_field.dart';
 import 'package:hackathon/app/common_widget.dart/text_label.dart';
-import 'package:hackathon/app/profile/model/user.dart';
 import 'package:hackathon/app/split/model/split.dart';
-import 'package:hackathon/app/split/model/split_expense.dart';
 import 'package:hackathon/app/split/widgets/split_widget.dart';
 import 'package:hackathon/constants/constants.dart';
+import 'package:hackathon/services/supabase_functions.dart';
+import 'package:hackathon/style/colors.dart';
 
-class SplitScreen extends StatelessWidget {
+class SplitScreen extends StatefulWidget {
   const SplitScreen({super.key});
+
+  @override
+  State<SplitScreen> createState() => _SplitScreenState();
+}
+
+class _SplitScreenState extends State<SplitScreen> {
+  TextEditingController title = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -66,67 +74,57 @@ class SplitScreen extends StatelessWidget {
                                     height32,
                                     const TextLabel(text: "العنوان"),
                                     TextFieldWidget(
-                                        hint: "",
-                                        controller: TextEditingController()),
+                                        hint: "", controller: title),
                                     const TextLabel(text: "الوصف"),
                                     TextFieldWidget(
                                         hint: "",
                                         controller: TextEditingController()),
                                     height48,
                                     ElevatedButtonWidget(
-                                        onPressed: () {}, text: "إضافة")
+                                        onPressed: () async {
+                                          await SupabaseFunctions().addSplit({
+                                            "title": title.text,
+                                            "total_balance": 0,
+                                            "members_ids": [currentUser.id],
+                                            "owner_id": currentUser.id
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                        text: "إضافة")
                                   ],
                                 ),
                               ),
                             ),
-                          ));
+                          )).then((value) {
+                    setState(() {});
+                  });
                 },
               ),
             ],
           ),
           const Divider(),
-          SplitWidget(
-            split: split,
-          ),
-          const Divider(),
-          SplitWidget(
-            split: split,
-          ),
-          const Divider(),
+          FutureBuilder(
+              future: SupabaseFunctions().getAllSplits(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Split> list = snapshot.data!;
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return SplitWidget(split: list[index]);
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                        color: ColorsApp.primaryColor),
+                  );
+                }
+              }),
         ]),
       ),
     );
   }
 }
-
-Split split = Split(
-    id: 1,
-    title: "Dubai Trip",
-    totalBalance: 7000,
-    description: "description",
-    ownerId: 1);
-
-SplitExpense splitExpense1 = SplitExpense(
-    id: 1,
-    title: "فندق",
-    amount: 200,
-    date: "Feb 3, 2024",
-    splitId: 1,
-    userId: 1);
-
-SplitExpense splitExpense2 = SplitExpense(
-    id: 2,
-    title: "مطعم",
-    amount: 50,
-    date: "Feb 4, 2024",
-    splitId: 1,
-    userId: 2);
-
-User user1 = User(
-    id: 1,
-    name: "محمد صالح",
-    username: "mohammed_saleh",
-    email: "mohammed_saleh@gmail.com");
-
-User user2 = User(
-    id: 2, name: "خالد علي", username: "Kh_Ali", email: "khaled@gmail.com");

@@ -2,11 +2,14 @@ import 'package:hackathon/app/auth/screens/loading_screen.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
 import 'package:hackathon/app/profile/model/account.dart';
 import 'package:hackathon/app/profile/model/user.dart' as user;
+import 'package:hackathon/app/split/model/split.dart';
+import 'package:hackathon/app/split/model/split_expense.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseFunctions {
   final supabase = Supabase.instance.client;
 
+//-------------- AUTH --------------
   addNewUser(Map body) async {
     try {
       await supabase.from('User').insert(body);
@@ -33,6 +36,7 @@ class SupabaseFunctions {
     }
   }
 
+//-------------- TRANSACTIONS --------------
   addTransaction(Map body) async {
     try {
       await supabase.from('Transaction').insert(body);
@@ -45,7 +49,10 @@ class SupabaseFunctions {
   Future<List<Transaction>> getAllTransaction() async {
     try {
       List<Transaction> list = [];
-      final response = await supabase.from('Transaction').select("*");
+      final response = await supabase
+          .from('Transaction')
+          .select("*")
+          .eq("user_id", currentUser.id);
       for (var element in response) {
         list.add(Transaction.fromJson(element));
       }
@@ -62,6 +69,7 @@ class SupabaseFunctions {
       final response = await supabase
           .from('Transaction')
           .select("*")
+          .eq("user_id", currentUser.id)
           .order("date", ascending: false);
 
       final Map<String, List<Transaction>> groupedTransactions = {};
@@ -99,7 +107,8 @@ class SupabaseFunctions {
       final data = await supabase
           .from('Transaction')
           .select("amount")
-          .eq("type", "النفقات");
+          .eq("type", "النفقات")
+          .eq("user_id", currentUser.id);
 
       double sum = 0;
       for (var element in data) {
@@ -118,7 +127,8 @@ class SupabaseFunctions {
       final data = await supabase
           .from('Transaction')
           .select("amount")
-          .eq("type", "الإيرادات");
+          .eq("type", "الإيرادات")
+          .eq("user_id", currentUser.id);
 
       double sum = 0;
       for (var element in data) {
@@ -132,6 +142,7 @@ class SupabaseFunctions {
     }
   }
 
+//-------------- ACCOUNT --------------
   addAccount(Map body) async {
     try {
       await supabase.from('Account').insert(body);
@@ -160,16 +171,99 @@ class SupabaseFunctions {
     }
   }
 
-  Future<Account> getAccount() async {
+  Future<Account?> getAccount() async {
     try {
       final response = await supabase
           .from('Account')
           .select("*")
-          .match({"user_id": currentUser.id}).single();
+          .match({"user_id": currentUser.id});
+      if (response.isNotEmpty) {
+        Account account = Account.fromJson(response.first);
+        return account;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
 
-      Account account = Account.fromJson(response);
+  //-------------- SPLIT --------------
+  addSplit(Map body) async {
+    try {
+      await supabase.from('Split').insert(body);
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
 
-      return account;
+  Future<List<Split>> getAllSplits() async {
+    try {
+      List<Split> list = [];
+      final response = await supabase.from('Split').select("*");
+
+      for (var element in response) {
+        if (((element["members_ids"]) as List).contains(currentUser.id)) {
+          list.add(Split.fromJson(element));
+        }
+      }
+
+      return list;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  addSplitExpense(Map body) async {
+    try {
+      await supabase.from('SplitExpense').insert(body);
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  Future<List<SplitExpense>> getSplitExpenses(int splitId) async {
+    try {
+      List<SplitExpense> list = [];
+      final response = await supabase
+          .from('SplitExpense')
+          .select("*,User(*)")
+          .eq("split_id", splitId)
+          .order("date");
+
+      for (var element in response) {
+        list.add(SplitExpense.fromJson(element));
+      }
+
+      return list;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  Future<List<user.User>> getSplitMembers(int splitId) async {
+    try {
+      List<user.User> list = [];
+      final response = await supabase
+          .from('Split')
+          .select("members_ids")
+          .eq("id", splitId)
+          .single();
+
+      final users = await supabase
+          .from('User')
+          .select("*")
+          .inFilter("id", response["members_ids"]);
+
+      for (var element in users) {
+        list.add(user.User.fromJson(element));
+      }
+      return list;
     } catch (error) {
       print(error);
       throw const FormatException();

@@ -5,6 +5,7 @@ import 'package:hackathon/app/home/widgets/switch_account.dart';
 import 'package:hackathon/app/home/widgets/transaction_widget.dart';
 import 'package:hackathon/app/home/widgets/type_widget.dart';
 import 'package:hackathon/app/profile/model/account.dart';
+import 'package:hackathon/app/profile/screens/account_screen.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/constants/data.dart';
 import 'package:hackathon/services/supabase_functions.dart';
@@ -21,6 +22,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController title = TextEditingController(),
+      monthlyIncome = TextEditingController();
   String dropdownValue = duration.first;
   double totalExpenses = 0;
   double totalIncomes = 0;
@@ -39,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SupabaseFunctions().getAllTransactionOrededByDate();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -164,6 +166,46 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           )
                         ]));
+                      } else if (snapshot.data == null) {
+                        return SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                    "قم بإضافة حساب للإستفادة من التطبيق "),
+                                height8,
+                                GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(16))),
+                                        builder: (context) => AddAccountSheet(
+                                            title: title,
+                                            monthlyIncome: monthlyIncome)).then(
+                                        (value) {
+                                      setState(() {});
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        color: ColorsApp.secondaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(16)),
+                                    child: const Text(
+                                      "إضافة حساب ",
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(

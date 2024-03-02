@@ -2,22 +2,22 @@ class Split {
   final int id;
   final String title;
   final double totalBalance;
-  final String description;
+  final List members;
   final int ownerId;
 
   Split({
     required this.id,
     required this.title,
     required this.totalBalance,
-    required this.description,
+    required this.members,
     required this.ownerId,
   });
 
   factory Split.fromJson(Map<String, dynamic> json) => Split(
         id: json["id"],
         title: json["title"],
-        totalBalance: json["total_balance"],
-        description: json["description"],
+        totalBalance: json["total_balance"]?.toDouble(),
+        members: json["members_ids"],
         ownerId: json["owner_id"],
       );
 
@@ -25,7 +25,7 @@ class Split {
         "id": id,
         "title": title,
         "totalBalance": totalBalance,
-        "description": description,
+        "members_ids": members,
         "owner_id": ownerId,
       };
 }

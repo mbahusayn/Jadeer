@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon/app/auth/screens/loading_screen.dart';
+import 'package:hackathon/app/auth/screens/login_screen.dart';
 import 'package:hackathon/app/profile/screens/account_screen.dart';
 import 'package:hackathon/app/profile/widgets/profile_tile.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/style/colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -112,18 +114,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: const Text("تصدير البيانات"),
           ),
           const Divider(indent: 16, endIndent: 16),
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(16)),
-              child: const Icon(
-                Icons.logout,
-                color: ColorsApp.primaryColor,
+          GestureDetector(
+            onTap: () async {
+              await Supabase.instance.client.auth.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ),
+                (route) => false,
+              );
+            },
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(16)),
+                child: const Icon(
+                  Icons.logout,
+                  color: ColorsApp.primaryColor,
+                ),
               ),
+              title: const Text("تسجيل خروج"),
             ),
-            title: const Text("تسجيل خروج"),
           ),
           const Divider(indent: 16, endIndent: 16),
         ],

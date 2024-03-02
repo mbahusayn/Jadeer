@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon/app/analytics/analytics_screen.dart';
+import 'package:hackathon/app/auth/screens/loading_screen.dart';
 import 'package:hackathon/app/home/screens/home_screen.dart';
 import 'package:hackathon/app/profile/screens/profile_screen.dart';
 import 'package:hackathon/app/split/screens/split_screen.dart';
+import 'package:hackathon/services/supabase_functions.dart';
 import 'package:hackathon/style/colors.dart';
 
 class AppNavigationBar extends StatefulWidget {
@@ -20,6 +22,17 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
     const ProfileScreen(),
   ];
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUser();
+  }
+
+  getUser() async {
+    currentUser = (await SupabaseFunctions().getLoggedInUser());
+  }
 
   @override
   Widget build(BuildContext context) {

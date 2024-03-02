@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hackathon/app/common_widget.dart/add_button.dart';
 import 'package:hackathon/app/common_widget.dart/text_label.dart';
 import 'package:hackathon/app/split/model/split.dart';
-import 'package:hackathon/app/split/screens/split_screen.dart';
 import 'package:hackathon/constants/constants.dart';
 
 class MembersScreen extends StatelessWidget {
@@ -62,7 +61,7 @@ class MemberExpenseWidget extends StatelessWidget {
             ),
           ),
           width8,
-          Text(user1.name),
+          const Text("user2"),
         ],
       ),
     );

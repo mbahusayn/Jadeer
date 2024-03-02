@@ -28,11 +28,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Future.delayed(const Duration(seconds: 1), () async {
       if (supabase.auth.currentSession != null) {
         isExpired = supabase.auth.currentSession!.isExpired;
+        currentUser = (await SupabaseFunctions().getLoggedInUser());
       } else {
         isExpired = true;
       }
       isLoading = false;
-      currentUser = (await SupabaseFunctions().getLoggedInUser()) as user.User;
+
       setState(() {});
     });
   }
