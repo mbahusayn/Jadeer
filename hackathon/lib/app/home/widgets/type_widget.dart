@@ -9,7 +9,7 @@ class TypeWidget extends StatelessWidget {
     required this.amount,
   });
   final String type;
-  final String amount;
+  final double amount;
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +17,7 @@ class TypeWidget extends StatelessWidget {
       width: getWidth(context) * 0.4,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: type == "النفقات"
-              ? ColorsApp.primaryColor
-              : ColorsApp.secondaryColor,
+          color: type == "النفقات" ? Colors.red[300] : ColorsApp.primaryColor,
           borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +44,7 @@ class TypeWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                amount,
+                amount.toString(),
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,

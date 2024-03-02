@@ -1,3 +1,5 @@
+import 'package:hackathon/app/auth/screens/loading_screen.dart';
+
 class Transaction {
   final String title;
   final String date;
@@ -27,5 +29,6 @@ class Transaction {
         "amount": amount,
         "type": type,
         "category": category,
+        "user_id": currentUser.id
       };
 }

@@ -5,10 +5,12 @@ class TextFieldWidget extends StatelessWidget {
       {super.key,
       required this.hint,
       required this.controller,
-      this.isNumber = false});
+      this.isNumber = false,
+      this.isPassword = false});
   final String hint;
   final TextEditingController controller;
   final bool isNumber;
+  final bool isPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class TextFieldWidget extends StatelessWidget {
       height: 55,
       child: TextField(
         controller: controller,
+        obscureText: isPassword,
         onTapOutside: (event) =>
             FocusScope.of(context).requestFocus(FocusNode()),
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,

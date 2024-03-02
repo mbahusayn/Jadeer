@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:hackathon/app/common_widget.dart/button.dart';
 import 'package:hackathon/app/common_widget.dart/text_label.dart';
 import 'package:hackathon/app/home/model/transaction_model.dart';
-import 'package:hackathon/app/home/screens/home_screen.dart';
 import 'package:hackathon/app/home/widgets/date_picker.dart';
 import 'package:hackathon/app/common_widget.dart/text_field.dart';
 import 'package:hackathon/constants/data.dart';
+import 'package:hackathon/services/supabase_functions.dart';
 import 'package:hackathon/utils/functions.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/style/colors.dart';
@@ -22,10 +22,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   TextEditingController tite = TextEditingController(),
       amount = TextEditingController(text: "100");
 
-  String dropdownisExpenseueCategory = categories.first;
+  String dropdownCategory = categories.first;
 
   DateTime selectedDate = DateTime.now();
-  String dropdownisExpenseue = categories.first;
+
   bool isExpense = true;
 
   @override
@@ -69,26 +69,26 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: DropdownButton<String>(
-                        value: dropdownisExpenseue,
+                        value: dropdownCategory,
                         icon: const Icon(Icons.keyboard_arrow_down),
                         elevation: 4,
                         underline: Container(),
                         style: const TextStyle(
                             color: Colors.black, fontFamily: "IBMPlexSans"),
-                        onChanged: (String? isExpenseue) {
+                        onChanged: (String? value) {
                           setState(() {
-                            dropdownisExpenseue = isExpenseue!;
+                            dropdownCategory = value!;
                           });
                         },
-                        items: categories.map<DropdownMenuItem<String>>(
-                            (String isExpenseue) {
+                        items: categories
+                            .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
-                            value: isExpenseue,
+                            value: value,
                             child: Row(
                               children: [
-                                categoryIcon(isExpenseue),
+                                categoryIcon(value),
                                 width8,
-                                Text(isExpenseue),
+                                Text(value),
                               ],
                             ),
                           );
@@ -241,16 +241,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: ElevatedButtonWidget(
-                      onPressed: () {
+                      onPressed: () async {
                         Transaction newTransaction = Transaction(
                             title: tite.text,
                             amount: double.parse(
                                 amount.text.isEmpty ? "1" : amount.text),
                             type: isExpense ? "النفقات" : "الإيرادات",
-                            category: dropdownisExpenseueCategory,
+                            category: dropdownCategory,
                             date:
-                                "${selectedDate.year}/${selectedDate.month}/${selectedDate.day}");
-                        transactions.add(newTransaction);
+                                "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}");
+                        await SupabaseFunctions()
+                            .addTransaction(newTransaction.toJson());
                         Navigator.pop(context);
                       },
                       text: "إضافة",

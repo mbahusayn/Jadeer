@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hackathon/app/navigation_bar.dart';
+import 'package:hackathon/app/auth/screens/loading_screen.dart';
+import 'package:hackathon/services/supabse_config.dart';
 
 void main() {
+  supabaseConfig();
   runApp(const MainApp());
 }
 
@@ -30,7 +32,7 @@ class MainApp extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16))),
           scaffoldBackgroundColor: Colors.white,
           dividerTheme: const DividerThemeData(thickness: 0.8)),
-      home: const AppNavigationBar(),
+      home: const LoadingScreen(),
     );
   }
 }

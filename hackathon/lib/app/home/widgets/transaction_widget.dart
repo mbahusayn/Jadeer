@@ -17,7 +17,7 @@ class TransactionWidget extends StatelessWidget {
       key: Key(transaction.title),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        transactions.remove(transaction);
+        // transactions.remove(transaction);
       },
       background: Container(
         decoration: BoxDecoration(
@@ -51,8 +51,8 @@ class TransactionWidget extends StatelessWidget {
               : "+ ${transaction.amount} ريال",
           style: TextStyle(
             color: transaction.type == "النفقات"
-                ? Colors.red
-                : ColorsApp.ternaryColor,
+                ? Colors.red[300]
+                : ColorsApp.primaryColor,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hackathon/app/auth/screens/loading_screen.dart';
 import 'package:hackathon/app/profile/screens/account_screen.dart';
 import 'package:hackathon/app/profile/widgets/profile_tile.dart';
 import 'package:hackathon/constants/constants.dart';
@@ -45,18 +46,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 width16,
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "أحمد عبدالعزيز",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      currentUser.name,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "@Ahmad_88",
+                      currentUser.username,
                       textDirection: TextDirection.ltr,
-                      style: TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),

@@ -6,7 +6,9 @@ import 'package:hackathon/app/home/widgets/transaction_widget.dart';
 import 'package:hackathon/app/home/widgets/type_widget.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/constants/data.dart';
+import 'package:hackathon/services/supabase_functions.dart';
 import 'package:hackathon/style/colors.dart';
+import 'package:hackathon/utils/functions.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -19,9 +21,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String dropdownValue = duration.first;
+  double totalExpenses = 0;
+  double totalIncomes = 0;
+
+  @override
+  void initState() {
+    getTotals();
+    super.initState();
+  }
+
+  getTotals() async {
+    totalExpenses = await SupabaseFunctions().getTotalExpenses();
+    totalIncomes = await SupabaseFunctions().getTotalIncomes();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    getTotals();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -143,17 +160,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 //------------ types
                 height24,
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TypeWidget(
                       type: "النفقات",
-                      amount: "5500",
+                      amount: totalExpenses,
                     ),
                     width16,
                     TypeWidget(
                       type: "الإيرادات",
-                      amount: "2000",
+                      amount: totalIncomes,
                     ),
                   ],
                 ),
@@ -167,21 +184,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 height8,
-                const Text(
-                  "Feb 17, 2024",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const Divider(),
-                ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: transactions.length,
-                  itemBuilder: (context, index) =>
-                      TransactionWidget(transaction: transactions[index]),
-                  separatorBuilder: (context, index) => const Divider(),
-                ),
-                height48,
 
+                FutureBuilder(
+                    future: SupabaseFunctions().getAllTransaction(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<Transaction> transactions = snapshot.data!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              dateFormat(transactions.first.date),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Divider(),
+                            ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: transactions.length,
+                              itemBuilder: (context, index) =>
+                                  TransactionWidget(
+                                      transaction: transactions[index]),
+                              separatorBuilder: (context, index) =>
+                                  const Divider(),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: ColorsApp.primaryColor,
+                          ),
+                        );
+                      }
+                    }),
+                height48,
                 //-------------end
               ],
             ),
@@ -192,29 +230,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-List<Transaction> transactions = [
-  Transaction(
-      title: "البيك",
-      date: "2/2/2024",
-      amount: 40,
-      type: "النفقات",
-      category: "مطعم"),
-  Transaction(
-      title: "بارنز كافيه",
-      date: "2/2/2024",
-      amount: 16,
-      type: "النفقات",
-      category: "مقهى"),
-  Transaction(
-      title: "حوالة",
-      date: "2/2/2024",
-      amount: 1000,
-      type: "إيرادات",
-      category: "حوالة"),
-  Transaction(
-      title: "سماعات",
-      date: "2/2/2024",
-      amount: 300,
-      type: "النفقات",
-      category: "تسوق"),
-];
+// List<Transaction> transactions = [
+//   Transaction(
+//       title: "البيك",
+//       date: "2/2/2024",
+//       amount: 40,
+//       type: "النفقات",
+//       category: "مطعم"),
+//   Transaction(
+//       title: "بارنز كافيه",
+//       date: "2/2/2024",
+//       amount: 16,
+//       type: "النفقات",
+//       category: "مقهى"),
+//   Transaction(
+//       title: "حوالة",
+//       date: "2/2/2024",
+//       amount: 1000,
+//       type: "إيرادات",
+//       category: "حوالة"),
+//   Transaction(
+//       title: "سماعات",
+//       date: "2/2/2024",
+//       amount: 300,
+//       type: "النفقات",
+//       category: "تسوق"),
+// ];

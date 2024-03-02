@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+String dateFormat(String date) {
+  List<String> list = date.split('-');
+  String formattedDate =
+      "${monthText(int.parse(list[1]))} ${list[2]}, ${list[0]}";
+  return formattedDate;
+}
+
 String monthText(int month) {
   switch (month) {
     case 1:
