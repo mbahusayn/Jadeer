@@ -6,6 +6,8 @@ import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/services/supabase_functions.dart';
 import 'package:hackathon/style/colors.dart';
 
+double totalBalance = 0;
+
 class BalanceView extends StatelessWidget {
   const BalanceView({super.key, required this.split});
   final Split split;
@@ -27,28 +29,35 @@ class BalanceView extends StatelessWidget {
                 text: "الرصيد الإجمالي",
                 color: Colors.white,
               ),
-              TextTitle(
-                text: "${split.totalBalance} ريال",
-                color: Colors.white,
-              )
+              FutureBuilder(
+                  future: SupabaseFunctions().getSplit(split.id),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      totalBalance = snapshot.data!.totalBalance;
+                    }
+                    return TextTitle(
+                      text: "${snapshot.data?.totalBalance ?? " "} ريال",
+                      color: Colors.white,
+                    );
+                  })
             ],
           ),
         ),
         FutureBuilder(
-            future: SupabaseFunctions().getSplitMembers(split.id),
+            future: SupabaseFunctions().getSplitMembersExpenses(split.id),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<User> list = snapshot.data!;
-                return ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    return MemberExpenseWidget(
-                      user: list[index],
-                    );
-                  },
-                  separatorBuilder: (context, index) => const Divider(),
+                Map<User, double> map = snapshot.data!;
+                return Column(
+                  children: [
+                    for (var user in map.keys)
+                      MemberExpenseWidget(
+                        map: map,
+                        user: user,
+                      )
+                  ],
                 );
+                //-----------
               } else {
                 return const Center(
                   child:
@@ -64,13 +73,16 @@ class BalanceView extends StatelessWidget {
 class MemberExpenseWidget extends StatelessWidget {
   const MemberExpenseWidget({
     super.key,
+    required this.map,
     required this.user,
   });
 
+  final Map map;
   final User user;
 
   @override
   Widget build(BuildContext context) {
+    double splitAmount = calculate(totalBalance, map[user], map.length);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -91,18 +103,23 @@ class MemberExpenseWidget extends StatelessWidget {
               Text(user.name),
             ],
           ),
-          const Row(
+          Row(
             children: [
               Text(
-                " + 200",
+                " ${splitAmount.toStringAsFixed(1)}",
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green),
+                    color: splitAmount > 0
+                        ? ColorsApp.primaryColor
+                        : Colors.red.shade300),
               ),
               Text(
                 " ريال ",
-                style: TextStyle(color: Colors.green),
+                style: TextStyle(
+                    color: splitAmount > 0
+                        ? ColorsApp.primaryColor
+                        : Colors.red.shade300),
               )
             ],
           )
@@ -110,4 +127,9 @@ class MemberExpenseWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+double calculate(double totalBalance, double expensesAmount, int membersNo) {
+  var splitForEach = totalBalance / membersNo;
+  return expensesAmount - splitForEach;
 }

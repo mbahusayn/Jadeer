@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon/app/auth/screens/signup_screen.dart';
+import 'package:hackathon/app/common_widget.dart/button.dart';
 import 'package:hackathon/app/common_widget.dart/text_field.dart';
 import 'package:hackathon/app/navigation_bar.dart';
+import 'package:hackathon/constants/constants.dart';
+import 'package:hackathon/style/colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -13,31 +16,46 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Log in"),
-        foregroundColor: Colors.black,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextFieldWidget(
-              controller: emailController,
-              hint: "email",
+            Image.asset(
+              "assets/images/logo.jpg",
+              width: 100,
             ),
-            TextFieldWidget(
-              controller: passwordController,
-              hint: "password",
+            height16,
+            const Text(
+              "أهلاً بك",
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            ElevatedButton(
+            const Text("سجل دخول للمتابعة"),
+            height32,
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextFieldWidget(
+                controller: emailController,
+                hint: "email",
+              ),
+            ),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextFieldWidget(
+                controller: passwordController,
+                hint: "password",
+                isPassword: true,
+              ),
+            ),
+            height16,
+            ElevatedButtonWidget(
                 onPressed: () async {
                   try {
                     final supabase = Supabase.instance.client;
                     await supabase.auth.signInWithPassword(
                         email: emailController.text,
                         password: passwordController.text);
-
+                    if (!context.mounted) return;
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
@@ -49,16 +67,25 @@ class LoginScreen extends StatelessWidget {
                     print(e);
                   }
                 },
-                child: const Text("Log in")),
-            TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SignUpScreen(),
-                      ));
-                },
-                child: const Text("sign up"))
+                text: "تسجيل الدخول"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("لا تملك حساب ؟ "),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUpScreen(),
+                          ));
+                    },
+                    child: const Text(
+                      "إنشاء حساب",
+                      style: TextStyle(color: ColorsApp.primaryColor),
+                    )),
+              ],
+            ),
           ],
         ),
       ),

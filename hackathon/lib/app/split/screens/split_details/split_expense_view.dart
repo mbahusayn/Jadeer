@@ -28,96 +28,100 @@ class _SplitExpenseViewState extends State<SplitExpenseView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        height16,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const TextLabel(text: "النفقات الحالية"),
-            AddIconButton(onPressed: () {
-              showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16))),
-                  builder: (context) => Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: SizedBox(
-                          height: 480,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Center(
-                                  child: Text(
-                                    "إضافة إنفاق جديد",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          height16,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const TextLabel(text: "النفقات الحالية"),
+              AddIconButton(onPressed: () {
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(16))),
+                    builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: SizedBox(
+                            height: 480,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Center(
+                                    child: Text(
+                                      "إضافة إنفاق جديد",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                                height32,
-                                const TextLabel(text: "العنوان"),
-                                TextFieldWidget(hint: "", controller: title),
-                                const TextLabel(text: "المبلغ"),
-                                TextFieldWidget(
-                                  hint: "",
-                                  controller: amount,
-                                  isNumber: true,
-                                ),
-                                const TextLabel(text: "التاريخ"),
-                                height8,
-                                const DatePickerWidget(),
-                                height48,
-                                ElevatedButtonWidget(
-                                    onPressed: () async {
-                                      await SupabaseFunctions()
-                                          .addSplitExpense({
-                                        "title": title.text,
-                                        "amount": amount.text,
-                                        "date": selectedDate,
-                                        "split_id": widget.split.id,
-                                        "user_id": currentUser.id
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                    text: "إضافة")
-                              ],
+                                  height32,
+                                  const TextLabel(text: "العنوان"),
+                                  TextFieldWidget(hint: "", controller: title),
+                                  const TextLabel(text: "المبلغ"),
+                                  TextFieldWidget(
+                                    hint: "",
+                                    controller: amount,
+                                    isNumber: true,
+                                  ),
+                                  const TextLabel(text: "التاريخ"),
+                                  height8,
+                                  const DatePickerWidget(),
+                                  height48,
+                                  ElevatedButtonWidget(
+                                      onPressed: () async {
+                                        await SupabaseFunctions()
+                                            .addSplitExpense({
+                                          "title": title.text,
+                                          "amount": amount.text,
+                                          "date": selectedDate,
+                                          "split_id": widget.split.id,
+                                          "user_id": currentUser.id
+                                        });
+                                        if (!mounted) return;
+                                        Navigator.pop(context);
+                                      },
+                                      text: "إضافة")
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      )).then((value) {
-                setState(() {});
-              });
-            }),
-          ],
-        ),
-        const Divider(),
-        FutureBuilder(
-            future: SupabaseFunctions().getSplitExpenses(widget.split.id),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<SplitExpense> list = snapshot.data!;
-                return ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    return SplitExpenseWidget(expense: list[index]);
-                  },
-                  separatorBuilder: (context, index) => const Divider(),
-                );
-              } else {
-                return const Center(
-                  child:
-                      CircularProgressIndicator(color: ColorsApp.primaryColor),
-                );
-              }
-            }),
-      ],
+                        )).then((value) {
+                  setState(() {});
+                });
+              }),
+            ],
+          ),
+          const Divider(),
+          FutureBuilder(
+              future: SupabaseFunctions().getSplitExpenses(widget.split.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<SplitExpense> list = snapshot.data!;
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return SplitExpenseWidget(expense: list[index]);
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                        color: ColorsApp.primaryColor),
+                  );
+                }
+              }),
+        ],
+      ),
     );
   }
 }
@@ -149,19 +153,25 @@ class SplitExpenseWidget extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              Text(expense.user.name.toString()),
+              Text(expense.user.name),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [TextLabel(text: expense.title), Text(expense.date)],
+            children: [
+              TextLabel(text: expense.title),
+              Text(
+                expense.date,
+                style: const TextStyle(color: Colors.grey),
+              )
+            ],
           ),
           Row(
             children: [
               Text(
                 expense.amount.toString(),
                 style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const Text(" ريال ")
             ],

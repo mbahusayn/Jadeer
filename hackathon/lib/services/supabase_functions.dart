@@ -46,47 +46,33 @@ class SupabaseFunctions {
     }
   }
 
-  Future<List<Transaction>> getAllTransaction() async {
-    try {
-      List<Transaction> list = [];
-      final response = await supabase
-          .from('Transaction')
-          .select("*")
-          .eq("user_id", currentUser.id);
-      for (var element in response) {
-        list.add(Transaction.fromJson(element));
-      }
-
-      return list;
-    } catch (error) {
-      print(error);
-      throw const FormatException();
-    }
-  }
-
-  Future<Map<String, List<Transaction>>> getAllTransactionOrededByDate() async {
+  Future<Map<String, List<Transaction>>?>
+      getAllTransactionOrededByDate() async {
     try {
       final response = await supabase
           .from('Transaction')
           .select("*")
           .eq("user_id", currentUser.id)
           .order("date", ascending: false);
+      if (response.isNotEmpty) {
+        final Map<String, List<Transaction>> groupedTransactions = {};
 
-      final Map<String, List<Transaction>> groupedTransactions = {};
+        for (final element in response) {
+          final String date = element["date"];
 
-      for (final element in response) {
-        final String date = element["date"];
-
-        if (!groupedTransactions.containsKey(date)) {
-          groupedTransactions[date] = [];
+          if (!groupedTransactions.containsKey(date)) {
+            groupedTransactions[date] = [];
+          }
+          groupedTransactions[date]!.add(Transaction.fromJson(element));
         }
-        groupedTransactions[date]!.add(Transaction.fromJson(element));
-      }
-      groupedTransactions.forEach((day, images) {
-        images.sort((a, b) => b.date.compareTo(a.date));
-      });
+        groupedTransactions.forEach((day, images) {
+          images.sort((a, b) => b.date.compareTo(a.date));
+        });
 
-      return groupedTransactions;
+        return groupedTransactions;
+      } else {
+        return null;
+      }
     } catch (error) {
       print(error);
       throw const FormatException();
@@ -177,12 +163,9 @@ class SupabaseFunctions {
           .from('Account')
           .select("*")
           .match({"user_id": currentUser.id});
-      if (response.isNotEmpty) {
-        Account account = Account.fromJson(response.first);
-        return account;
-      } else {
-        return null;
-      }
+
+      Account account = Account.fromJson(response.first);
+      return account;
     } catch (error) {
       print(error);
       throw const FormatException();
@@ -211,6 +194,19 @@ class SupabaseFunctions {
       }
 
       return list;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  Future<Split> getSplit(int splitId) async {
+    try {
+      final response =
+          await supabase.from('Split').select().eq("id", splitId).single();
+      Split split = Split.fromJson(response);
+
+      return split;
     } catch (error) {
       print(error);
       throw const FormatException();
@@ -267,6 +263,56 @@ class SupabaseFunctions {
     } catch (error) {
       print(error);
       throw const FormatException();
+    }
+  }
+
+  Future<Map<user.User, double>> getSplitMembersExpenses(int splitId) async {
+    try {
+      List<user.User> list = await getSplitMembers(splitId);
+
+      Map<user.User, double> userTotalExpenses = {};
+      for (var user in list) {
+        final response = await supabase
+            .from('SplitExpense')
+            .select("amount")
+            .match({"user_id": user.id, "split_id": splitId});
+
+        for (var element in response) {
+          if (userTotalExpenses.containsKey(user)) {
+            userTotalExpenses[user] =
+                userTotalExpenses[user]! + (element["amount"]).toDouble();
+          } else {
+            userTotalExpenses[user] = (element["amount"]).toDouble();
+          }
+        }
+      }
+      print(userTotalExpenses);
+      return userTotalExpenses;
+    } catch (error) {
+      print(error);
+      throw const FormatException();
+    }
+  }
+
+  joinToSplit(int splitId) async {
+    try {
+      final response = await supabase
+          .from('Split')
+          .select("members_ids")
+          .eq("id", splitId)
+          .single();
+      List ids = response["members_ids"];
+      if (ids.contains(currentUser.id)) {
+        return false;
+      }
+      ids.add(currentUser.id);
+      await supabase
+          .from('Split')
+          .update({"members_ids": ids}).eq("id", splitId);
+
+      return true;
+    } catch (error) {
+      print(error);
     }
   }
 }

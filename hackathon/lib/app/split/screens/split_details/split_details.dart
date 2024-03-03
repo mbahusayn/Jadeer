@@ -50,13 +50,35 @@ class SplitDetails extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 16),
-                width: getWidth(context),
-                height: 150,
-                decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(16)),
+              Stack(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 16),
+                    width: getWidth(context),
+                    clipBehavior: Clip.hardEdge,
+                    height: 150,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(16)),
+                    child: Image.asset(
+                      "assets/images/account.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                            color: ColorsApp.secondaryColor,
+                            shape: BoxShape.circle),
+                        child: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 20,
+                        )),
+                  )
+                ],
               ),
               Container(
                 height: 40,

@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           )
                         ]));
-                      } else if (snapshot.data == null) {
+                      } else if (snapshot.hasError) {
                         return SizedBox(
                           height: 150,
                           child: Center(
@@ -208,8 +208,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       } else {
                         return const Center(
-                          child: CircularProgressIndicator(
-                            color: ColorsApp.primaryColor,
+                          child: SizedBox(
+                            height: 150,
+                            width: 150,
+                            child: CircularProgressIndicator(
+                              color: ColorsApp.primaryColor,
+                            ),
                           ),
                         );
                       }
@@ -256,6 +260,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               )
                           ],
                         );
+                      } else if (snapshot.data == null) {
+                        return Container();
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(

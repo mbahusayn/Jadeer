@@ -250,6 +250,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             date: selectedDate);
                         await SupabaseFunctions()
                             .addTransaction(newTransaction.toJson());
+                        if (!mounted) return;
                         Navigator.pop(context);
                       },
                       text: "إضافة",

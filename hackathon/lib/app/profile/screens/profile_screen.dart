@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hackathon/app/auth/screens/loading_screen.dart';
 import 'package:hackathon/app/auth/screens/login_screen.dart';
 import 'package:hackathon/app/profile/screens/account_screen.dart';
+import 'package:hackathon/app/profile/screens/settings_screen.dart';
 import 'package:hackathon/app/profile/widgets/profile_tile.dart';
 import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/style/colors.dart';
@@ -86,18 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             screen: AccountScreen(),
           ),
           const Divider(indent: 16, endIndent: 16),
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(16)),
-              child: const Icon(
-                Icons.settings_outlined,
-                color: ColorsApp.primaryColor,
-              ),
-            ),
-            title: const Text("الإعدادات"),
+          const ProfileTile(
+            text: "الإعدادات",
+            icon: Icons.settings_outlined,
+            screen: SettingsScreen(),
           ),
           const Divider(indent: 16, endIndent: 16),
           ListTile(
@@ -117,6 +110,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           GestureDetector(
             onTap: () async {
               await Supabase.instance.client.auth.signOut();
+              currentUser.id = 0;
+              if (!mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(

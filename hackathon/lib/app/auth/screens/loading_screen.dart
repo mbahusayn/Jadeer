@@ -55,13 +55,12 @@ class LogoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Icon(
-          Icons.text_format,
-          size: 40,
-        ),
-      ),
+          child: Image.asset(
+        "assets/images/logo.jpg",
+        width: 200,
+      )),
     );
   }
 }

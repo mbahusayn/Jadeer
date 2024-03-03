@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon/app/auth/screens/login_screen.dart';
+import 'package:hackathon/app/common_widget.dart/button.dart';
 import 'package:hackathon/app/common_widget.dart/text_field.dart';
+import 'package:hackathon/constants/constants.dart';
 import 'package:hackathon/services/supabase_functions.dart';
+import 'package:hackathon/style/colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -16,7 +19,6 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sign Up"),
         foregroundColor: Colors.black,
       ),
       body: Padding(
@@ -24,23 +26,44 @@ class SignUpScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              "assets/images/logo.jpg",
+              width: 100,
+            ),
+            height16,
+            const Text(
+              "إنشاء حساب جديد",
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            height24,
             TextFieldWidget(
               controller: nameController,
-              hint: "name",
+              hint: "الاسم",
             ),
-            TextFieldWidget(
-              controller: usernameController,
-              hint: "username",
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextFieldWidget(
+                controller: usernameController,
+                hint: "username",
+              ),
             ),
-            TextFieldWidget(
-              controller: emailController,
-              hint: "email",
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextFieldWidget(
+                controller: emailController,
+                hint: "email",
+              ),
             ),
-            TextFieldWidget(
-              controller: passwordController,
-              hint: "password",
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: TextFieldWidget(
+                controller: passwordController,
+                hint: "password",
+                isPassword: true,
+              ),
             ),
-            ElevatedButton(
+            height32,
+            ElevatedButtonWidget(
                 onPressed: () async {
                   try {
                     final supabase = Supabase.instance.client;
@@ -55,7 +78,7 @@ class SignUpScreen extends StatelessWidget {
                         "email": emailController.text
                       });
                     });
-
+                    if (!context.mounted) return;
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -66,7 +89,26 @@ class SignUpScreen extends StatelessWidget {
                         SnackBar(content: Text(error.toString())));
                   }
                 },
-                child: const Text("Sign up"))
+                text: "إنشاء حساب"),
+            height8,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("لديك حساب بالفعل ؟ "),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUpScreen(),
+                          ));
+                    },
+                    child: const Text(
+                      "تسجيل الدخول",
+                      style: TextStyle(color: ColorsApp.primaryColor),
+                    )),
+              ],
+            )
           ],
         ),
       ),

@@ -117,12 +117,12 @@ class AddAccountSheet extends StatelessWidget {
               height32,
               const TextLabel(text: "العنوان"),
               TextFieldWidget(
-                hint: "",
+                hint: "الحساب الأساسي",
                 controller: title,
               ),
               const TextLabel(text: "الدخل الشهري"),
               TextFieldWidget(
-                hint: "",
+                hint: "12000",
                 controller: monthlyIncome,
                 isNumber: true,
               ),
@@ -136,7 +136,7 @@ class AddAccountSheet extends StatelessWidget {
                       "total_budget": double.parse(monthlyIncome.text),
                       "user_id": currentUser.id,
                     });
-
+                    if (!context.mounted) return;
                     Navigator.pop(context);
                   },
                   text: "إضافة"),

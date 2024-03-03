@@ -36,6 +36,7 @@ class SplitWidget extends StatelessWidget {
               child: const Icon(
                 Icons.photo_outlined,
                 color: ColorsApp.lightColor,
+                size: 40,
               ),
             ),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
